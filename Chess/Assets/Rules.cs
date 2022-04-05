@@ -29,7 +29,6 @@ public class Rules : MonoBehaviour
             string to = GetSquare(dad.dropPosition);
             string figure = chess.GetFigureAt((int)((dad.pickPosition.x-13) / 2.0)-1, (int)(dad.pickPosition.y/2.0)-1).ToString();
             string move = figure + from + to;
-            foreach(string str in chess.GetAlMoves()) Debug.Log(str);
             chess = chess.Move(move);
             ShowFigures();
 
