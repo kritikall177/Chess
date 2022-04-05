@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//using ChessRules;
 
 public class Rules : MonoBehaviour
 {
@@ -33,6 +34,7 @@ class DragAndDrop
 
     State state;
     GameObject item;
+    Vector2 offset;
 
     public DragAndDrop()
     {
@@ -72,6 +74,7 @@ class DragAndDrop
         if(clickedItem == null) return;
         item = clickedItem.gameObject;
         state = State.drag;
+        offset = (Vector2)clickedItem.position - clickPosition;
         Debug.Log("Picked up" + item.name);
     }
 
@@ -89,7 +92,7 @@ class DragAndDrop
 
     void Drag()
     {
-        item.transform.position = GetClickPosition();
+        item.transform.position = GetClickPosition() + offset;
     }
     void Drop()
     {
