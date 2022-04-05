@@ -1,26 +1,73 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using ChessRules;
+using ChessRules;
 
 public class Rules : MonoBehaviour
 {
     DragAndDrop dad;
+    Chess chess;
 
     public Rules()
     {
         dad = new DragAndDrop();
+        chess = new Chess();
     }
     // Start is called before the first frame update
     void Start()
     {
-        
+        ShowFigures();
     }
 
     // Update is called once per frame
     void Update()
     {
-        dad.Action(); 
+        if (dad.Action())
+        {
+            string from = GetSquare(dad.pickPosition);
+            string to = GetSquare(dad.dropPosition);
+            string figure = chess.GetFigureAt((int)((dad.pickPosition.x-13) / 2.0)-1, (int)(dad.pickPosition.y/2.0)-1).ToString();
+            string move = figure + from + to;
+            foreach(string str in chess.GetAlMoves()) Debug.Log(str);
+            chess = chess.Move(move);
+            ShowFigures();
+
+        } 
+    }
+
+    string GetSquare(Vector2 position)
+    {
+        int x = Convert.ToInt32((position.x - 13) / 2.0);
+        int y = Convert.ToInt32(position.y / 2.0);
+        return ((char)('a' + x - 1)).ToString() + y.ToString();
+    }
+
+    void ShowFigures()
+    {
+        int nr =0;
+        for (int y = 0; y < 8; y++)
+            for (int x = 0; x < 8; x++)
+            {
+                string figure = chess.GetFigureAt(x,y).ToString();
+                if (figure == ".") continue;
+                PlaceFigure("box" + nr, figure, y, x);
+                nr++;
+            }
+        for (; nr < 32; nr++) PlaceFigure("box" + nr, "q", 9, 9);
+    }
+
+    void PlaceFigure(string box, string figure, int x, int y)
+    {
+        GameObject goBox = GameObject.Find(box);
+        GameObject goFigure = GameObject.Find(figure);
+        GameObject goSquare = GameObject.Find("" + x + y);
+
+        var spriteFigure = goFigure.GetComponent<SpriteRenderer>();
+        var spriteBox = goBox.GetComponent<SpriteRenderer>();
+        spriteBox.sprite = spriteFigure.sprite;
+
+        goBox.transform.position= goSquare.transform.position;
     }
 }
 
@@ -31,6 +78,9 @@ class DragAndDrop
         none,
         drag
     }
+
+    public Vector2 pickPosition { get; private set; }
+    public Vector2 dropPosition { get; private set; }
 
     State state;
     GameObject item;
@@ -72,9 +122,10 @@ class DragAndDrop
         Vector2 clickPosition = GetClickPosition();
         Transform clickedItem = GetItemAt(clickPosition);
         if(clickedItem == null) return;
+        pickPosition = clickedItem.position;
         item = clickedItem.gameObject;
         state = State.drag;
-        offset = (Vector2)clickedItem.position - clickPosition;
+        offset = pickPosition - clickPosition;
         Debug.Log("Picked up" + item.name);
     }
 
@@ -87,7 +138,7 @@ class DragAndDrop
     {
         RaycastHit2D[] figure = Physics2D.RaycastAll(position, position, 0.5f);
         if (figure.Length == 0) return null;
-        return figure[0].transform;
+        return figure   [0].transform;
     }
 
     void Drag()
@@ -96,6 +147,7 @@ class DragAndDrop
     }
     void Drop()
     {
+        dropPosition = item.transform.position;
         state = State.none;
         item = null;
     }
