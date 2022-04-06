@@ -29,7 +29,15 @@ public class Rules : MonoBehaviour
             string to = GetSquare(dad.dropPosition);
             string figure = chess.GetFigureAt((int)((dad.pickPosition.x-13) / 2.0)-1, (int)(dad.pickPosition.y/2.0)-1).ToString();
             string move = figure + from + to;
-            chess = chess.Move(move);
+            if(chess != chess.Move(move))
+            {
+                if (figure == "P" && to[1] == '8' || figure == "p" && to[1] == '1')
+                {
+                    Debug.Log("выбор фигуры");
+                    chess = chess.PawmTransform(move, Figure.whiteKing);
+                }
+                else chess = chess.Move(move);
+            }
             ShowFigures();
 
         } 
