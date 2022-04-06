@@ -33,8 +33,11 @@ public class Rules : MonoBehaviour
             {
                 if (figure == "P" && to[1] == '8' || figure == "p" && to[1] == '1')
                 {
+                    Figure figureTransform;
+                    if (Char.IsUpper(figure, 0)) figureTransform = Figure.whiteQueen;
+                    else figureTransform = Figure.blackQueen;
                     Debug.Log("выбор фигуры");
-                    chess = chess.PawmTransform(move, Figure.whiteKing);
+                    chess = chess.PawmTransform(move, figureTransform);
                 }
                 else chess = chess.Move(move);
             }
@@ -63,6 +66,8 @@ public class Rules : MonoBehaviour
             }
         for (; nr < 32; nr++) PlaceFigure("box" + nr, "q", 9, 9);
     }
+
+
 
     void PlaceFigure(string box, string figure, int x, int y)
     {
