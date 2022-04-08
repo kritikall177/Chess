@@ -36,6 +36,7 @@ public class Rules : MonoBehaviour
                     Figure figureTransform;
                     if (Char.IsUpper(figure, 0)) figureTransform = Figure.whiteQueen;
                     else figureTransform = Figure.blackQueen;
+                    ChoosePanel();
                     Debug.Log("выбор фигуры");
                     chess = chess.PawmTransform(move, figureTransform);
                 }
@@ -44,6 +45,17 @@ public class Rules : MonoBehaviour
             ShowFigures();
 
         } 
+    }
+
+    void ChoosePanel()
+    {
+        GameObject goChoosePanel = GameObject.Find("ChoosePanel");
+        Debug.Log(dad.dropPosition.x);
+        Debug.Log(dad.pickPosition.y);
+        //(float)((int)(dad.pickPosition.x - 13) + 13.1
+        goChoosePanel.transform.position = new Vector3(dad.dropPosition.x, dad.pickPosition.y - 1, goChoosePanel.transform.position.z);
+        Debug.Log(goChoosePanel.transform.position.x);
+        Debug.Log(goChoosePanel.transform.position.y);
     }
 
     string GetSquare(Vector2 position)
